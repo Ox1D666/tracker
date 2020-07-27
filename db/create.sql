@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS  Roles (
+/*CREATE TABLE IF NOT EXISTS  Roles (
 	id SERIAL PRIMARY KEY,
 	role text 
 );
@@ -29,17 +29,17 @@ CREATE TABLE IF NOT EXISTS Сategories (
 CREATE TABLE IF NOT EXISTS States (
 	id SERIAL PRIMARY KEY,
 	state text 
-);
+);*/
 
 CREATE TABLE IF NOT EXISTS Items (
 	id serial primary key,
 	name text,
-	UserID int references Users(id),
-	State int references States(id),
-	Category int references Сategories(id)
+--	UserID int references Users(id),
+--	State int references States(id),
+--	Category int references Сategories(id)
 );
 
-CREATE TABLE IF NOT EXISTS Comments (
+/*CREATE TABLE IF NOT EXISTS Comments (
 	id SERIAL PRIMARY KEY,
 	Comment text, 
 	ItemID int references Items(id)
@@ -56,7 +56,7 @@ INSERT INTO Roles(id, role) values(1, 'administraror'),
 (3, 'executor');
 INSERT INTO Users(id, login, password, RoleID) values(1, 'admin', 'admin', 1),
 (2, 'manager', 'qwerty', 2),
-(3, 'worker', '123', 3);
+(3, 'worker', '123', 3);*/
 
 
 

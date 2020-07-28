@@ -6,6 +6,11 @@ public class Item {
     private String name;
     private String id;
 
+    public Item(String id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     public Item(String name) {
         this.name = name;
     }

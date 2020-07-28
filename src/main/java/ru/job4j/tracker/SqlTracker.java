@@ -2,6 +2,7 @@ package ru.job4j.tracker;
 
 import java.io.InputStream;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import org.slf4j.Logger;
@@ -35,37 +36,84 @@ public class SqlTracker implements Store {
 
     @Override
     public Item add(Item item) {
+        init();
         try (PreparedStatement st = cn.prepareStatement("insert into items(name) values(?)")) {
             st.setString(1, item.getName());
             st.executeUpdate();
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }
-        return null;
+        return item;
     }
 
     @Override
     public boolean replace(String id, Item item) {
-        return false;
+        init();
+        boolean result = false;
+        try (PreparedStatement st = cn.prepareStatement("update items set name=? where id=?;")) {
+            st.setString(1, item.getName());
+            st.setInt(2, Integer.parseInt(id));
+            st.executeUpdate();
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+        }
+        return result;
     }
 
     @Override
     public boolean delete(String id) {
-        return false;
+        init();
+        boolean result = false;
+        try (PreparedStatement st = cn.prepareStatement("delete from items where id=?")) {
+            st.setInt(1, Integer.parseInt(id));
+            st.executeUpdate();
+            result = true;
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+        }
+        return result;
     }
 
     @Override
     public List<Item> findAll() {
-        return null;
+        init();
+        List<Item> result = new ArrayList<>();
+        try (PreparedStatement st = cn.prepareStatement("select * from items")) {
+            ResultSet rs = st.executeQuery();
+            while (rs.next()) {
+                result.add(new Item(String.valueOf(rs.getInt("id")), rs.getString("name")));
+            }
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+        }
+        return result;
     }
 
     @Override
     public List<Item> findByName(String key) {
-        return null;
+        init();
+        List<Item> result = new ArrayList<>();
+        try (PreparedStatement st = cn.prepareStatement("select * from items where name like ?")) {
+            ResultSet rs = st.executeQuery();
+            while (rs.next()) {
+                result.add(new Item(String.valueOf(rs.getInt("id")), rs.getString("name")));
+            }
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+        }
+        return result;
     }
 
     @Override
     public Item findById(String id) {
-        return null;
+        init();
+        Item result = null;
+        try (PreparedStatement st = cn.prepareStatement("select * from items where id=?")) {
+            ResultSet rs = st.executeQuery();
+            result = new Item(String.valueOf(rs.getInt("id")), rs.getString("name"));
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+        }
+        return result;
     }
 }

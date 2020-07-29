@@ -12,6 +12,10 @@ public class SqlTracker implements Store {
     private static final Logger LOG = LoggerFactory.getLogger(SqlTracker.class.getName());
     private Connection cn;
 
+    public SqlTracker() {
+        init();
+    }
+
     public void init() {
         try (InputStream in = SqlTracker.class.getClassLoader().getResourceAsStream("app.properties")) {
             Properties config = new Properties();
@@ -36,7 +40,6 @@ public class SqlTracker implements Store {
 
     @Override
     public Item add(Item item) {
-        init();
         try (PreparedStatement st = cn.prepareStatement("insert into items(name) values(?)")) {
             st.setString(1, item.getName());
             st.executeUpdate();
@@ -48,12 +51,13 @@ public class SqlTracker implements Store {
 
     @Override
     public boolean replace(String id, Item item) {
-        init();
         boolean result = false;
         try (PreparedStatement st = cn.prepareStatement("update items set name=? where id=?;")) {
             st.setString(1, item.getName());
             st.setInt(2, Integer.parseInt(id));
-            st.executeUpdate();
+            if (st.executeUpdate() > 0) {
+                result = true;
+            }
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }
@@ -62,12 +66,12 @@ public class SqlTracker implements Store {
 
     @Override
     public boolean delete(String id) {
-        init();
         boolean result = false;
         try (PreparedStatement st = cn.prepareStatement("delete from items where id=?")) {
             st.setInt(1, Integer.parseInt(id));
-            st.executeUpdate();
-            result = true;
+            if (st.executeUpdate() > 0) {
+                result = true;
+            }
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }
@@ -76,12 +80,12 @@ public class SqlTracker implements Store {
 
     @Override
     public List<Item> findAll() {
-        init();
         List<Item> result = new ArrayList<>();
         try (PreparedStatement st = cn.prepareStatement("select * from items")) {
-            ResultSet rs = st.executeQuery();
-            while (rs.next()) {
-                result.add(new Item(String.valueOf(rs.getInt("id")), rs.getString("name")));
+            try (ResultSet rs = st.executeQuery()) {
+                while (rs.next()) {
+                    result.add(new Item(String.valueOf(rs.getInt("id")), rs.getString("name")));
+                }
             }
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
@@ -91,12 +95,13 @@ public class SqlTracker implements Store {
 
     @Override
     public List<Item> findByName(String key) {
-        init();
         List<Item> result = new ArrayList<>();
         try (PreparedStatement st = cn.prepareStatement("select * from items where name like ?")) {
-            ResultSet rs = st.executeQuery();
-            while (rs.next()) {
-                result.add(new Item(String.valueOf(rs.getInt("id")), rs.getString("name")));
+            st.setString(1, key);
+            try (ResultSet rs = st.executeQuery()) {
+                while (rs.next()) {
+                    result.add(new Item(String.valueOf(rs.getInt("id")), rs.getString("name")));
+                }
             }
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
@@ -106,11 +111,14 @@ public class SqlTracker implements Store {
 
     @Override
     public Item findById(String id) {
-        init();
         Item result = null;
         try (PreparedStatement st = cn.prepareStatement("select * from items where id=?")) {
-            ResultSet rs = st.executeQuery();
-            result = new Item(String.valueOf(rs.getInt("id")), rs.getString("name"));
+            st.setInt(1, Integer.parseInt(id));
+            try (ResultSet rs = st.executeQuery()) {
+                if (rs.next()) {
+                    result = new Item(String.valueOf(rs.getInt("id")), rs.getString("name"));
+                }
+            }
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }

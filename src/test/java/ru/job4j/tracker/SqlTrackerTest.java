@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import static org.hamcrest.Matchers.is;
 
@@ -33,6 +35,49 @@ public class SqlTrackerTest {
         try (SqlTracker tracker = new SqlTracker(ConnectionRollback.create(this.init()))) {
             tracker.add(new Item("name", "desc"));
             assertThat(tracker.findByName("desc").size(), is(1));
+        }
+    }
+
+    @Test
+    public void replaceItem() throws Exception {
+        try (SqlTracker tracker = new SqlTracker(ConnectionRollback.create(this.init()))) {
+            tracker.add(new Item("1", "asd"));
+            tracker.replace("1", new Item("1", "qwe"));
+            assertThat(tracker.findById("1"), is(new Item("1", "qwe")));
+        }
+    }
+
+    @Test
+    public void deleteItem() throws Exception {
+        try (SqlTracker tracker = new SqlTracker(ConnectionRollback.create(this.init()))) {
+            tracker.add(new Item("1", "asd"));
+            tracker.delete("1");
+            assertNull(tracker.findById("1"));
+        }
+    }
+
+    @Test
+    public void findAllItem() throws Exception {
+        try (SqlTracker tracker = new SqlTracker(ConnectionRollback.create(this.init()))) {
+            tracker.add(new Item("1", "asd"));
+            tracker.add(new Item("2", "qwe"));
+            List<Item> result = tracker.findAll();
+            assertThat(tracker.findAll().size(), is(2));
+        }
+    }
+    @Test
+    public void findByName() throws Exception {
+        try (SqlTracker tracker = new SqlTracker(ConnectionRollback.create(this.init()))) {
+            tracker.add(new Item("1", "asd"));
+            tracker.add(new Item("2", "asd"));
+            assertThat(tracker.findByName("asd").size(), is(2));
+        }
+    }
+    @Test
+    public void findById() throws Exception {
+        try (SqlTracker tracker = new SqlTracker(ConnectionRollback.create(this.init()))) {
+            tracker.add(new Item("1", "asd"));
+            assertNotNull(tracker.findById("1"));
         }
     }
 }

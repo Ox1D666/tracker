@@ -45,25 +45,25 @@ public class SqlTracker implements Store {
 
     @Override
     public Item add(Item item) {
-        try (PreparedStatement st = cn.prepareStatement("insert into items(name) values(?, ?)")) {
-            st.setInt(1, Statement.RETURN_GENERATED_KEYS);
-            st.setString(2, item.getName());
-            st.executeUpdate();
+        try (PreparedStatement st = cn.prepareStatement("insert into items(name) values(?)", Statement.RETURN_GENERATED_KEYS)) {
+            st.setString(1, item.getName());
+            st.executeQuery();
             try (ResultSet keys = st.getGeneratedKeys()) {
-                    if (keys.next()) {
-                        item.setId(String.valueOf(keys.getInt(1)));
-                    }
+                if (keys.next()) {
+                    item.setId(String.valueOf(keys.getInt(1)));
+                }
             }
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }
+        System.out.println(item.getId());
         return item;
     }
 
     @Override
     public boolean replace(String id, Item item) {
         boolean result = false;
-        try (PreparedStatement st = cn.prepareStatement("update items set name=? where id=?;")) {
+        try (PreparedStatement st = cn.prepareStatement("update items set name=? where id=?")) {
             st.setString(1, item.getName());
             st.setInt(2, Integer.parseInt(id));
             if (st.executeUpdate() > 0) {

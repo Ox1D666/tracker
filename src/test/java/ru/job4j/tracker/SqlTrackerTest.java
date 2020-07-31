@@ -41,9 +41,10 @@ public class SqlTrackerTest {
     @Test
     public void replaceItem() throws Exception {
         try (SqlTracker tracker = new SqlTracker(ConnectionRollback.create(this.init()))) {
-            tracker.add(new Item("1", "asd"));
-            tracker.replace("1", new Item("1", "qwe"));
-            assertThat(tracker.findById("1"), is(new Item("1", "qwe")));
+            Item item = new Item("1", "asd");
+            tracker.add(item);
+            tracker.replace(item.getId(), new Item("1", "qwe"));
+            assertThat(tracker.findById(item.getId()).getName(), is( "qwe"));
         }
     }
 
@@ -61,7 +62,6 @@ public class SqlTrackerTest {
         try (SqlTracker tracker = new SqlTracker(ConnectionRollback.create(this.init()))) {
             tracker.add(new Item("1", "asd"));
             tracker.add(new Item("2", "qwe"));
-            List<Item> result = tracker.findAll();
             assertThat(tracker.findAll().size(), is(2));
         }
     }
@@ -76,8 +76,9 @@ public class SqlTrackerTest {
     @Test
     public void findById() throws Exception {
         try (SqlTracker tracker = new SqlTracker(ConnectionRollback.create(this.init()))) {
-            tracker.add(new Item("1", "asd"));
-            assertNotNull(tracker.findById("1"));
+            Item item = new Item("1", "asd");
+            tracker.add(item);
+            assertNotNull(tracker.findById(item.getId()));
         }
     }
 }

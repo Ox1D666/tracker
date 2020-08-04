@@ -14,10 +14,6 @@ before_install:
 
 sudo: false
 
-env:
-  global:
-    - CODECOV_TOKEN="e26fba15-ea1a-4720-b903-f07c73627a6d"
-
 # после выполнения сборки запустить скрипт, который будет собирать статистику по JaCoCo
 # Здесь используется сторонни сервис https://codecov.io/
 after_success:
@@ -30,3 +26,8 @@ notifications:
       - kirill.coldline@gmail.ru
     on_success: never # default: change
     on_failure: always # default: always
+
+env:
+  global:
+    - CODECOV_TOKEN="e26fba15-ea1a-4720-b903-f07c73627a6d"
+

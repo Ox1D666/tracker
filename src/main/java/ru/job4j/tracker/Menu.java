@@ -71,7 +71,7 @@ public class Menu {
 
         @Override
         public void execute(Input input, Store tracker) {
-            if (tracker.replace(input.askStr("Enter id selected item:"), new Item(input.askStr("Enter new name")))) {
+            if (tracker.replace(Integer.parseInt(input.askStr("Enter id selected item:")), new Item(input.askStr("Enter new name")))) {
                 System.out.println("success");
             } else {
                 System.out.println("false");
@@ -85,7 +85,7 @@ public class Menu {
 
         @Override
         public void execute(Input input, Store tracker) {
-            if (tracker.delete(input.askStr("Enter id selected item:"))) {
+            if (tracker.delete(Integer.parseInt(input.askStr("Enter id selected item:")))) {
                 System.out.println("success");
             } else {
                 System.out.println("false");
@@ -99,8 +99,7 @@ public class Menu {
 
         @Override
         public void execute(Input input, Store tracker) {
-            String id = input.askStr("Enter id selected item:");
-            Item item = tracker.findById(id);
+            Item item = tracker.findById(Integer.parseInt(input.askStr("Enter id selected item:")));
             if (item != null) {
                 System.out.println(item.getId() + " " + item.getName());
             } else {

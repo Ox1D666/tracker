@@ -33,7 +33,7 @@ public class SqlTrackerTest {
     @Test
     public void createItem() throws Exception {
         try (SqlTracker tracker = new SqlTracker(ConnectionRollback.create(this.init()))) {
-            tracker.add(new Item("name", "desc"));
+            tracker.add(new Item("desc"));
             assertThat(tracker.findByName("desc").size(), is(1));
         }
     }
@@ -41,9 +41,9 @@ public class SqlTrackerTest {
     @Test
     public void replaceItem() throws Exception {
         try (SqlTracker tracker = new SqlTracker(ConnectionRollback.create(this.init()))) {
-            Item item = new Item("1", "asd");
+            Item item = new Item("asd");
             tracker.add(item);
-            tracker.replace(item.getId(), new Item("1", "qwe"));
+            tracker.replace(item.getId(), new Item("qwe"));
             assertThat(tracker.findById(item.getId()).getName(), is( "qwe"));
         }
     }
@@ -51,32 +51,32 @@ public class SqlTrackerTest {
     @Test
     public void deleteItem() throws Exception {
         try (SqlTracker tracker = new SqlTracker(ConnectionRollback.create(this.init()))) {
-            tracker.add(new Item("1", "asd"));
-            tracker.delete("1");
-            assertNull(tracker.findById("1"));
+            tracker.add(new Item("asd"));
+            tracker.delete(1);
+            assertNull(tracker.findById(1));
         }
     }
 
     @Test
     public void findAllItem() throws Exception {
         try (SqlTracker tracker = new SqlTracker(ConnectionRollback.create(this.init()))) {
-            tracker.add(new Item("1", "asd"));
-            tracker.add(new Item("2", "qwe"));
+            tracker.add(new Item("asd"));
+            tracker.add(new Item("qwe"));
             assertThat(tracker.findAll().size(), is(2));
         }
     }
     @Test
     public void findByName() throws Exception {
         try (SqlTracker tracker = new SqlTracker(ConnectionRollback.create(this.init()))) {
-            tracker.add(new Item("1", "asd"));
-            tracker.add(new Item("2", "asd"));
+            tracker.add(new Item("asd"));
+            tracker.add(new Item("asd"));
             assertThat(tracker.findByName("asd").size(), is(2));
         }
     }
     @Test
     public void findById() throws Exception {
         try (SqlTracker tracker = new SqlTracker(ConnectionRollback.create(this.init()))) {
-            Item item = new Item("1", "asd");
+            Item item = new Item("asd");
             tracker.add(item);
             assertNotNull(tracker.findById(item.getId()));
         }

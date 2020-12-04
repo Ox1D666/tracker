@@ -8,17 +8,16 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SqlTracker implements Store {
+public class SqlTracker implements Store, AutoCloseable {
     private static final Logger LOG = LoggerFactory.getLogger(SqlTracker.class.getName());
     private Connection cn;
 
     public SqlTracker() {
-        init();
     }
 
     public SqlTracker(Connection cn) {
-        init();
         this.cn = cn;
+        init();
     }
 
     public void init() {

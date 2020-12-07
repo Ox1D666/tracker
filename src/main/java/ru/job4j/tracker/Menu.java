@@ -3,6 +3,8 @@ package ru.job4j.tracker;
 import ru.job4j.tracker.action.Action;
 import ru.job4j.tracker.action.BaseAction;
 import ru.job4j.tracker.input.Input;
+import ru.job4j.tracker.model.Item;
+import ru.job4j.tracker.store.Store;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +48,7 @@ public class Menu {
         }
 
         @Override
-        public void execute(Input input, Store tracker) {
+        public void execute(Input input, Store tracker){
             for (Item item : tracker.findAll()) {
                 System.out.println(String.format("Name: %s | Id: %s",
                         item.getName(), item.getId()));

@@ -1,10 +1,11 @@
-package ru.job4j.tracker;
+package ru.job4j.tracker.store;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import ru.job4j.tracker.model.Item;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -22,7 +23,7 @@ public class HibernateRun {
             System.out.println(item);
             Item rsl = findById(item.getId(), sf);
             System.out.println(rsl);
-//            delete(rsl.getId(), sf);
+            delete(rsl.getId(), sf);
             List<Item> list = findAll(sf);
             for (Item it : list) {
                 System.out.println(it);
@@ -64,7 +65,7 @@ public class HibernateRun {
     public static List<Item> findAll(SessionFactory sf) {
         Session session = sf.openSession();
         session.beginTransaction();
-        List result = session.createQuery("from ru.job4j.tracker.Item").list();
+        List result = session.createQuery("from ru.job4j.tracker.model.Item").list();
         session.getTransaction().commit();
         session.close();
         return result;

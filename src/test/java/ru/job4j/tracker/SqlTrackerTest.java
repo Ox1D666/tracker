@@ -1,13 +1,13 @@
 package ru.job4j.tracker;
 
 import org.junit.Test;
+import ru.job4j.tracker.model.Item;
+import ru.job4j.tracker.store.ConnectionRollback;
+import ru.job4j.tracker.store.SqlTracker;
 
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 import static org.hamcrest.Matchers.is;
 
